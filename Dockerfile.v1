@@ -1,0 +1,13 @@
+#dockerfile welcome
+FROM alpine:latest
+#RUN apk update && apk --no-cache add curl && apk --no-cache add openjdk11 && adduser welcome --disabled-password && mkdir -p /opt/app/ && chown -R welcome:welcome /opt/app/
+RUN addgroup -S welcome && adduser -S welcome -G welcome && apk update && apk add openjdk11 curl
+USER welcome
+WORKDIR /opt/app/
+EXPOSE 8025
+COPY --chown=welcome:welcome target/welcome-1.0.0.jar /opt/app/welcome.jar
+COPY --chown=welcome:welcome application.properties /opt/app/application.properties
+#ADD html /opt/app/html
+
+#ENTRYPOINT exec java -Dserver.port=8024 -Xlog:gc:gclog.log -Dspring.config.location=/opt/app/application.properties -jar welcome.jar 
+ENTRYPOINT exec java -Dserver.port=8025 -Dspring.config.location=/opt/app/application.properties -jar welcome.jar
